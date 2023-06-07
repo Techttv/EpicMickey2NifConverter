@@ -9,12 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Icon\export.png" />
-    <None Remove="Icon\openFolder.png" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
     <PackageReference Include="HelixToolkit.Wpf" Version="2.24.0" />
+    <PackageReference Include="HelixToolkit.Wpf.SharpDX" Version="2.24.0" />
+    <PackageReference Include="SharpDX" Version="4.2.0" />
+    <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,12 +53,27 @@
     <Resource Include="Fonts\Roboto-ThinItalic.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="test_files\FTL.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icon\export.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Icon\openFolder.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Content Include="test_files\mickey.nif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="test_files\oggetto.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Classes\Nif.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

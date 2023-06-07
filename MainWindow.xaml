@@ -9,10 +9,10 @@
         Title="MainWindow" Height="560" Width="900" ResizeMode="CanMinimize">
     <Grid Background="{DynamicResource Background}">
         <Border Style="{DynamicResource BorderStyle1}" Width="327" Height="419" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,15,0">
-            <ht:HelixViewport3D CoordinateSystemHorizontalPosition="Center" FixedRotationPointEnabled="True">
+            <ht:HelixViewport3D CoordinateSystemHorizontalPosition="Center" FixedRotationPointEnabled="True" x:Name="viewport">
                 <ht:SunLight Altitude="500"/>
                 <ht:GridLinesVisual3D/>
-                <ht:CubeVisual3D/>
+                
             </ht:HelixViewport3D>
         </Border>
         <Border BorderThickness="0" Width="463" Height="410" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="31,0,0,26" Background="{DynamicResource Grigio scuro}">
