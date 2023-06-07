@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,76 +10,39 @@ namespace prova_3dviewport.Classes
     public class vertexBlock
     {
         public int offset { get; set; }
-        private byte[]? dataByte { get;set; } = new byte[] { };
-        private int[]? dataInt { get; set; } = new int[] { };
+        private List<float> vertex = new List<float>();
+        private int vertexAmount;
 
-        public vertexBlock(int offset,)
+        public vertexBlock(int offset, string[] hex)
         {
             this.offset = offset;
-            findVertex(string path)
-        }
-
-        public void addVertex(byte val)
-        {
-            dataByte.Append(val);
-        }
-        public void addVertex(int val)
-        {
-            dataInt.Append(val);
-        }
-
-        public void addVertex(byte[] val, bool replace)
-        {
-            if (replace)
-            {
-                dataByte = val;
-            }
-            else
-            {
-                dataByte.Union(val);
-            }
-        }
-        public void addVertex(int[] val, bool replace)
-        {
-            if(replace)
-            {
-                dataInt = val;
-            }
-            else
-            {
-                dataInt.Union(val);
-            }
+            findVertex(hex);
         }
 
         public string writeToObj()
         {
-            string vertices="";
-            if(dataByte.Length>dataInt.Length)
-            {
-                //implementare scrittura dei dati byte
-                for(int i = 0; i < dataByte.Length; i++)
-                {
-                    vertices+= " " + dataByte[i];
 
-                    if (i % 3 == 0&&i!=0&&i!=dataByte.Length-1)
-                    {
-                        vertices+="\nv"
-                    }
-                }
+            //TODO
+            string s="";
 
-            }
-            else
-            {
-                //implementare scrittura dei dati int
-            }
-
-
-            return vertices;
+            return s;
         }
 
-        public void findVertex()
+        public void findVertex(string[] hex)
         {
+            string temp = hex[offset - 13] + hex[offset - 12];
+            vertexAmount = Convert.ToInt32(temp, 16);
+            Trace.Write(vertexAmount);
+            string hexstring;
+            for(int i = offset; i < offset+ (vertexAmount * 12); i+=4)
+            {
+                hexstring = hex[i]+ hex[i+1]+ hex[i+2] + hex[i + 3];
+                uint num = uint.Parse(hexstring, System.Globalization.NumberStyles.AllowHexSpecifier);
 
+                byte[] floatVals = BitConverter.GetBytes(num);
+                float f = BitConverter.ToSingle(floatVals, 0);
+                vertex.Add(f);
+            }
         }
 
     }

@@ -15,8 +15,10 @@ namespace prova_3dviewport.Classes
 
     public class Nif
     {
-        private ModelVisual3D? visualModel;
+        private ModelVisual3D visualModel = new ModelVisual3D();
         private string path;
+        private List<vertexBlock> vertex = new List<vertexBlock>();
+        private List<faceBlock> face = new List<faceBlock>();
 
         public Nif(string path)
         {
@@ -55,19 +57,20 @@ namespace prova_3dviewport.Classes
             string temphex = BitConverter.ToString(data);
             int numeroOggetti = 0;
             string[] hex = temphex.Split('-');
+            
             for (int i = 0; i < hex.Length; i++)
             {
                 if (hex[i].Equals("15") && hex[i + 1] == "02" && hex[i + 2] == "01")
                 {
-                    numeroOggetti++;
+                    face.Add(new faceBlock(i + 4, hex));
+                }
+                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03") && (hex[i+4]!="38"&& hex[i + 5] != "04" && hex[i+6]!="03"))
+                {
+                    //ricerca dei blocchi dei vertici FUNZIONA
+                    vertex.Add(new vertexBlock(i + 4, hex));
                 }
             }
-            Trace.Write(numeroOggetti);
-        }
-
-        private void findVertex()
-        {
-
+            Trace.WriteLine(numeroOggetti);
         }
     }
 }

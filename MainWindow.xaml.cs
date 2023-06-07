@@ -33,7 +33,7 @@ namespace prova_3dviewport
         public MainWindow()
         {
             InitializeComponent();
-            Nif nif = new Nif(@"C:\EpicMickey2_Definitive\Export\unpacked\characters\mickey\mickey.nif");
+            Nif nif = new Nif(@"OST_center_01a_bellow_01a.nif");
             nif.toModel();
             /*ObjReader obj = new ObjReader();
             Model3DGroup model = null;
