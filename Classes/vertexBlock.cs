@@ -12,7 +12,7 @@ namespace prova_3dviewport.Classes
     {
         public int offset { get; set; }
         public List<float> vertex = new List<float>();
-        private int vertexAmount;
+        public int vertexAmount;
 
         public vertexBlock(int offset, string[] hex)
         {
@@ -42,7 +42,9 @@ namespace prova_3dviewport.Classes
                 float f = BitConverter.ToSingle(floatVals, 0);
                 string temp1 = f.ToString();
                 int temp2 = temp1.IndexOf(',');
-                temp1 = temp1.Substring(0, temp2+5);
+                int Stringlenght = temp1.Length-1;
+                if(Stringlenght-temp2>4)
+                    temp1 = temp1.Substring(0, temp2 + 5);
                 Trace.WriteLine(float.Parse(temp1));
                 vertex.Add(float.Parse(temp1));
                 

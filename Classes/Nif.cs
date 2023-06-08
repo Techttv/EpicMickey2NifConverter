@@ -8,7 +8,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Printing;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -19,9 +22,14 @@ namespace prova_3dviewport.Classes
     public class Nif
     {
         private string path;
-        private List<vertexBlock> vertex = new List<vertexBlock>();
-        private List<faceBlock> face = new List<faceBlock>();
+        private static List<vertexBlock> vertex = new List<vertexBlock>();
+        private static List<faceBlock> face = new List<faceBlock>();
+        private static Queue<int> faceIndex = new Queue<int>();
+        private static Queue<int> vertexIndex = new Queue<int>();
+        private List<Thread> threads = new List<Thread>();
         private string filename="";
+        private static string[] hex;
+        public Point3D centerPoint;
         public Nif(string path)
         {
             try
@@ -56,21 +64,35 @@ namespace prova_3dviewport.Classes
             writer.AutoFlush = true;
             byte[] data = File.ReadAllBytes(path);
             string temphex = BitConverter.ToString(data);
-            string[] hex = temphex.Split('-');
+            hex = temphex.Split('-');
 
             for (int i = 0; i < hex.Length; i++)
             {
                 if (hex[i].Equals("15") && hex[i + 1] == "02" && hex[i + 2] == "01")
                 {
-                    face.Add(new faceBlock(i + 4, hex));
+                    faceIndex.Enqueue(i + 4);
                 }
                 if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03") && (hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04"))
                 {
                     //ricerca dei blocchi dei vertici FUNZIONA
-                    vertex.Add(new vertexBlock(i + 4, hex));
+                    vertexIndex.Enqueue(i + 4);
                 }
             }
-
+            int IndexTotal = faceIndex.Count;
+            for (int i =0;i<IndexTotal;i++)
+            {
+                threads.Add(new Thread(new ThreadStart(findFace)));
+                threads.Last().Start();
+            }
+            IndexTotal = vertexIndex.Count;
+            for (int i = 0; i<IndexTotal;i++)
+            {
+                threads.Add(new Thread(new ThreadStart(findVertex)));
+                threads.Last().Start();
+            }
+            
+            float x=0, y=0, z=0;
+            int dividendo=0;
             for(int k =0;k<vertex.Count;k++)
             {
                 for(int i = 0; i < vertex.ElementAt(k).vertex.Count; i+=3)
@@ -80,8 +102,17 @@ namespace prova_3dviewport.Classes
                     v2 = vertex.ElementAt(k).vertex.ElementAt(i+1).ToString().Replace(',', '.');
                     v3 = vertex.ElementAt(k).vertex.ElementAt(i+2).ToString().Replace(',', '.');
                     writer.Write("v " + v1 + " " + v2 + " " + v3+"\n");
+                    x += vertex.ElementAt(k).vertex.ElementAt(i);
+                    y += vertex.ElementAt(k).vertex.ElementAt(i + 1);
+                    z += vertex.ElementAt(k).vertex.ElementAt(i + 2);
                 }
+                dividendo+= vertex.ElementAt(k).vertexAmount;
             }
+            x = x / dividendo;
+            y = y / dividendo;
+            z = z / dividendo;
+            centerPoint = new Point3D(x, y, z);
+
             int totalIndex = 1;
             for(int k =0;k<face.Count;k++)
             {
@@ -96,8 +127,27 @@ namespace prova_3dviewport.Classes
                 }
                 totalIndex += vertex.ElementAt(k).vertex.Count/3;
             }
-
+            
             writer.Close();
+        }
+
+        private static void findFace()
+        {
+            face.Add(new faceBlock(faceIndex.Dequeue(), hex));
+
+        }
+
+        private static void findVertex()
+        {
+            vertex.Add(new vertexBlock(vertexIndex.Dequeue(), hex));
+        }
+        public bool isEmpty()
+        {
+            if (vertex.Count > 0)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }
