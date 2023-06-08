@@ -1,10 +1,13 @@
 ﻿using HelixToolkit.Wpf;
 using HelixToolkit.Wpf.SharpDX;
+using SharpDX.Direct3D9;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -15,18 +18,16 @@ namespace prova_3dviewport.Classes
 
     public class Nif
     {
-        private ModelVisual3D visualModel = new ModelVisual3D();
         private string path;
         private List<vertexBlock> vertex = new List<vertexBlock>();
         private List<faceBlock> face = new List<faceBlock>();
-
+        private string filename="";
         public Nif(string path)
         {
             try
             {
                 Path.GetFullPath(path);
                 this.path = path;
-                visualModel = null;
             }
             catch (Exception)
             {
@@ -34,43 +35,69 @@ namespace prova_3dviewport.Classes
             }
         }
 
-        public ModelVisual3D toModel()
+        public string toModel()
         {
-            if (visualModel == null)
+            if (filename.Length==0)
             {
-                string filename = Path.GetTempFileName();
-                FileInfo fileInfo = new FileInfo(filename);
-                fileInfo.Attributes = FileAttributes.Temporary;
+                FileStream fs = File.Create(@"temp.obj");
+                fs.Close();
+                filename = fs.Name;
 
                 createMesh(filename);
             }
 
 
-            return visualModel;
+            return filename;
         }
 
         private void createMesh(string filename)
         {
             StreamWriter writer = new StreamWriter(filename);
-
+            writer.AutoFlush = true;
             byte[] data = File.ReadAllBytes(path);
             string temphex = BitConverter.ToString(data);
-            int numeroOggetti = 0;
             string[] hex = temphex.Split('-');
-            
+
             for (int i = 0; i < hex.Length; i++)
             {
                 if (hex[i].Equals("15") && hex[i + 1] == "02" && hex[i + 2] == "01")
                 {
                     face.Add(new faceBlock(i + 4, hex));
                 }
-                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03") && (hex[i+4]!="38"&& hex[i + 5] != "04" && hex[i+6]!="03"))
+                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03") && (hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04"))
                 {
                     //ricerca dei blocchi dei vertici FUNZIONA
                     vertex.Add(new vertexBlock(i + 4, hex));
                 }
             }
-            Trace.WriteLine(numeroOggetti);
+
+            for(int k =0;k<vertex.Count;k++)
+            {
+                for(int i = 0; i < vertex.ElementAt(k).vertex.Count; i+=3)
+                {
+                    string v1, v2,v3;
+                    v1 = vertex.ElementAt(k).vertex.ElementAt(i).ToString().Replace(',', '.');
+                    v2 = vertex.ElementAt(k).vertex.ElementAt(i+1).ToString().Replace(',', '.');
+                    v3 = vertex.ElementAt(k).vertex.ElementAt(i+2).ToString().Replace(',', '.');
+                    writer.Write("v " + v1 + " " + v2 + " " + v3+"\n");
+                }
+            }
+            int totalIndex = 1;
+            for(int k =0;k<face.Count;k++)
+            {
+                
+                for(int i =0;i<face.ElementAt(k).face.Count;i+=3)
+                {
+                    string f1, f2, f3;
+                    f1 = (face.ElementAt(k).face.ElementAt(i) + totalIndex).ToString();
+                    f2 = (face.ElementAt(k).face.ElementAt(i+1) + totalIndex).ToString();
+                    f3 = (face.ElementAt(k).face.ElementAt(i+2) + totalIndex).ToString();
+                    writer.Write("f " + f1+" "+f2+" "+f3+"\n");
+                }
+                totalIndex += vertex.ElementAt(k).vertex.Count/3;
+            }
+
+            writer.Close();
         }
     }
 }

@@ -20,6 +20,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Media.TextFormatting;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace prova_3dviewport
 {
@@ -33,33 +34,35 @@ namespace prova_3dviewport
         public MainWindow()
         {
             InitializeComponent();
-            Nif nif = new Nif(@"OST_center_01a_bellow_01a.nif");
-            nif.toModel();
-            /*ObjReader obj = new ObjReader();
+            Nif nif = new Nif(@"C:\Users\tomma\Downloads\OST_center_01a_bellow_01a.nif");
+            ObjReader obj = new ObjReader();
             Model3DGroup model = null;
-            model = obj.Read(@"oggetto.obj");
+            model = obj.Read(nif.toModel());
             ModelVisual3D modelVisual3D = new ModelVisual3D();
             modelVisual3D.Content = model;
-            viewport.Children.Add(modelVisual3D);*/
+            viewport.Children.Add(modelVisual3D);
         }
 
         private void btn_openFolder_Click(object sender, RoutedEventArgs e)
         {
             lb_files.Items.Clear();
+            strings.Clear();
             FolderBrowserDialog dialog = new FolderBrowserDialog();
             dialog.RootFolder = Environment.SpecialFolder.MyComputer;
             dialog.ShowNewFolderButton = true;
             dialog.ShowDialog();
 
-
+            
 
             String path = dialog.SelectedPath;
+            txt_path.Text = path;
             try
             {
                 var txtFiles = Directory.EnumerateFiles(path, "*.nif");
 
                 foreach (string currentFile in txtFiles)
                 {
+                    
                     strings.Add(currentFile);
                     string fileName = currentFile.Substring(path.Length + 1);
                     lb_files.Items.Add(fileName);
@@ -73,15 +76,36 @@ namespace prova_3dviewport
 
         private void lb_files_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            viewport.Children.RemoveAt(3);
             int index = this.lb_files.SelectedIndex;
-            if (index != System.Windows.Forms.ListBox.NoMatches)
+            if (index != -1) { 
+                Nif nif = new Nif(strings[index]);
+                ObjReader obj = new ObjReader();
+                Model3DGroup model = null;
+                model = obj.Read(nif.toModel());
+                ModelVisual3D modelVisual3D = new ModelVisual3D();
+                modelVisual3D.Content = model;
+                viewport.Children.Add(modelVisual3D);
+            }
+        }
+
+        private void txt_path_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            lb_files.Items.Clear();
+            String path = txt_path.Text;
+            try
             {
-                Model3DGroup MdlGrp = null;
-                ModelVisual3D device3D = new ModelVisual3D();
-                ObjReader ObjRed = new ObjReader();
-                MdlGrp = ObjRed.Read(strings[index]);
-                device3D.Content = MdlGrp;
-               // viewport.Children.Add(device3D);
+                var txtFiles = Directory.EnumerateFiles(path, "*.nif");
+
+                foreach (string currentFile in txtFiles)
+                {
+                    strings.Add(currentFile);
+                    string fileName = currentFile.Substring(path.Length + 1);
+                    lb_files.Items.Add(fileName);
+                }
+            }
+            catch (Exception)
+            {
             }
         }
     }

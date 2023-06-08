@@ -19,7 +19,7 @@
             <ListBox x:Name="lb_files" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource Background}" MouseDoubleClick="lb_files_MouseDoubleClick"></ListBox>
         </Border>
         <StackPanel Orientation="Horizontal" Margin="31,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <TextBox Style="{DynamicResource TextBoxStyle1}" Text="C:\EpicMickey2_Definitive\chaiNNer-windows..." VerticalAlignment="Bottom" Width="282" Height="32" FontFamily="{DynamicResource Roboto-regular}" CharacterCasing="Lower" VerticalContentAlignment="Center"/>
+            <TextBox x:Name="txt_path" Style="{DynamicResource TextBoxStyle1}" Text="" VerticalAlignment="Bottom" Width="282" Height="32" FontFamily="{DynamicResource Roboto-regular}" CharacterCasing="Lower" VerticalContentAlignment="Center" TextChanged="txt_path_TextChanged"/>
             <Button Style="{DynamicResource ButtonStyle1}" x:Name="btn_openFolder" Width="36" Height="32" Margin="8,0" VerticalAlignment="Bottom" Click="btn_openFolder_Click">
                 <Image Source="/Icon/openFolder.png" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Button>
