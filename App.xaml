@@ -7,6 +7,7 @@
         <SolidColorBrush x:Key="Background" Color="#6F7Db6"/>
         <SolidColorBrush x:Key="Grigio scuro" Color="#313852"/>
         <SolidColorBrush x:Key="Azzurrino" Color="#283C85"/>
+        <SolidColorBrush x:Key="Blu scuro" Color="#111A39"/>
         <Style x:Key="BorderStyle1" TargetType="{x:Type Border}" >
             <Setter Property="BorderBrush" Value="{DynamicResource Grigio scuro}"/>
             <Setter Property="BorderThickness" Value="7"/>
@@ -39,8 +40,8 @@
         <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
             <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
             <Setter Property="Background" Value="{DynamicResource Azzurrino}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Blu scuro}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Background}"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -56,12 +57,67 @@
                                 <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ThicknessAnimationUsingKeyFrames
+                                                Duration="0:0:1"
+                                                FillBehavior="HoldEnd"
+                                                Storyboard.TargetProperty="BorderThickness"
+                                                >
+                                                <SplineThicknessKeyFrame KeySpline="1,0.0 0.6,0.00" KeyTime="0:0:1">
+                                                    <SplineThicknessKeyFrame.Value>
+                                                        <Thickness Left="6" Right="6" Top="6" Bottom="6"/>
+                                                    </SplineThicknessKeyFrame.Value>
+                                                </SplineThicknessKeyFrame>
+                                            </ThicknessAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ThicknessAnimationUsingKeyFrames
+                                                Duration="0:0:1"
+                                                FillBehavior="HoldEnd"
+                                                Storyboard.TargetProperty="BorderThickness"
+                                                >
+                                                <LinearThicknessKeyFrame KeyTime="0:0:1">
+                                                    <LinearThicknessKeyFrame.Value>
+                                                        <Thickness Left="0" Right="0" Top="0" Bottom="0"/>
+                                                    </LinearThicknessKeyFrame.Value>
+                                                </LinearThicknessKeyFrame>
+                                            </ThicknessAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Setter Property="BorderBrush" TargetName="border" Value="#111A39"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                From="#283C85" To="#111A39" Duration="0:0:1"
+                                                FillBehavior="HoldEnd"
+                                                />
+
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <ColorAnimation
+                                                Storyboard.TargetProperty="(Button.Background).(SolidColorBrush.Color)"
+                                                From="#111A39" To="#283C85" Duration="0:0:1"
+                                                FillBehavior="HoldEnd"
+                                                />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="false">
                                 <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>

@@ -53,6 +53,9 @@
     <Resource Include="Fonts\Roboto-ThinItalic.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icon\back.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Icon\export.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

@@ -39,7 +39,7 @@ namespace prova_3dviewport.Classes
 
         public string toModel()
         {
-            if (filename.Length==0)
+            if (filename.Length==0&&!path.Contains("toon"))
             {
                 FileStream fs = File.Create(@"temp.obj");
                 fs.Close();
@@ -62,11 +62,12 @@ namespace prova_3dviewport.Classes
 
             for (int i = 0; i < hex.Length; i++)
             {
+                
                 if (hex[i].Equals("15") && hex[i + 1] == "02" && hex[i + 2] == "01")
                 {
                     face.Add(new faceBlock(i + 4, hex));
                 }
-                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03") && (hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04"))
+                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i+2]=="03" && ((hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04") || (hex[i + 4] != "36" && hex[i + 5] != "04" && hex[i + 6] != "02"))))
                 {
                     //ricerca dei blocchi dei vertici FUNZIONA
                     vertex.Add(new vertexBlock(i + 4, hex));

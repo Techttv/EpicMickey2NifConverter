@@ -1,26 +1,16 @@
 ﻿using HelixToolkit.Wpf;
-using HelixToolkit.Wpf.SharpDX.Elements2D;
 using prova_3dviewport.Classes;
+using SharpDX.Direct2D1;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Media.TextFormatting;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace prova_3dviewport
 {
@@ -29,8 +19,8 @@ namespace prova_3dviewport
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<string> strings = new List<string>();
-
+        public static List<string> strings = new List<string>();
+        string basepath="";
         public MainWindow()
         {
             InitializeComponent();
@@ -44,11 +34,12 @@ namespace prova_3dviewport
             dialog.RootFolder = Environment.SpecialFolder.MyComputer;
             dialog.ShowNewFolderButton = true;
             dialog.ShowDialog();
-
+            
             
 
             String path = dialog.SelectedPath;
             txt_path.Text = path;
+            basepath = path;
             try
             {
                 var txtFiles = Directory.EnumerateFiles(path, "*.nif");
@@ -71,39 +62,25 @@ namespace prova_3dviewport
         {
             if (viewport.Children.Count == 4)
             {
-                viewport.Children.RemoveAt(3);
+                for (int i = 3; i < viewport.Children.Count; i++)
+                {
+                    viewport.Children.RemoveAt(i);
+                }
             }
             int index = this.lb_files.SelectedIndex;
+            if(lb_files.SelectedItems.Count > 1 ) {
+                foreach (var item in lb_files.SelectedItems)
+                {
+                    string path = basepath + "\\" + item.ToString();
+                    LoadFile(path);
+                }
+                return;
+            }
             if (index != -1)
             {
-                Nif nif = new Nif(strings[index]);
-                ObjReader obj = new ObjReader();
-                Model3DGroup model = null;
-                model = obj.Read(nif.toModel());
-                if (!nif.isEmpty())
-                {
+                LoadFile(strings[index]);
 
-                    Model3DCollection collection = model.Children;
-                    Model3D geom = collection.ElementAt(0);
 
-                    Vector3D axis = new Vector3D(1, 0, 0); //In case you want to rotate it about the x-axis
-                    Matrix3D transformationMatrix = geom.Transform.Value; //Gets the matrix indicating the current transformation value
-                    transformationMatrix.RotateAt(new System.Windows.Media.Media3D.Quaternion(axis, 90), nif.centerPoint); //Makes a rotation transformation over this matrix
-                    geom.Transform = new MatrixTransform3D(transformationMatrix);
-
-                    grid.Center = nif.centerPoint;
-                    viewport.Camera.LookAt(nif.centerPoint, 2);
-                    viewport.CameraController.AddZoomForce(-0.3);
-                    viewport.FixedRotationPoint = nif.centerPoint;
-                    ModelVisual3D modelVisual3D = new ModelVisual3D();
-                    modelVisual3D.Content = model;
-
-                    viewport.Children.Add(modelVisual3D);
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show("Model not found");
-                }
             }
         }
 
@@ -124,6 +101,78 @@ namespace prova_3dviewport
             }
             catch (Exception)
             {
+            }
+        }
+
+        private void LoadFile(string strings)
+        {
+            Nif nif = new Nif(strings);
+            ObjReader obj = new ObjReader();
+            Model3DGroup model = null;
+            string path = nif.toModel();
+            if (path == "")
+            {
+                System.Windows.MessageBox.Show("Cannot read the model");
+                return;
+            }
+            model = obj.Read(path);
+            MeshBuilder TestMesh = new MeshBuilder(false, false);
+            if (!nif.isEmpty())
+            {
+
+                foreach (var m in model.Children)
+                {
+                    var mGeo = m as GeometryModel3D;
+                    var mesh = (MeshGeometry3D)((Geometry3D)mGeo.Geometry);
+                    if (mesh != null) TestMesh.Append(mesh);
+                }
+
+                GeometryModel3D geometryModel3D = new GeometryModel3D();
+                geometryModel3D.Geometry = TestMesh.ToMesh();
+                geometryModel3D.Material = Materials.DarkGray;
+
+                ;
+
+                //rotate the mesh in correct axis
+
+                Vector3D axis = new Vector3D(1, 0, 0); //In case you want to rotate it about the x-axis
+                Matrix3D transformationMatrix = geometryModel3D.Transform.Value; //Gets the matrix indicating the current transformation value
+                transformationMatrix.RotateAt(new System.Windows.Media.Media3D.Quaternion(axis, 90), nif.centerPoint); //Makes a rotation transformation over this matrix
+                /*Vector3D translation = new Vector3D(-nif.centerPoint.X, -nif.centerPoint.X, -nif.centerPoint.X);
+                transformationMatrix.Translate(translation);*/
+                geometryModel3D.Transform = new MatrixTransform3D(transformationMatrix);
+
+
+                //centra la griglia e la telecamera
+                grid.Center = nif.centerPoint;
+                viewport.Camera.LookAt(nif.centerPoint, 2);
+                Point3D cameraPosition = new Point3D(nif.centerPoint.X + 20, nif.centerPoint.Y + 10, nif.centerPoint.Z + 30);
+                viewport.Camera.Position = cameraPosition;
+                viewport.FixedRotationPoint = nif.centerPoint;
+
+
+                ModelVisual3D modelVisual3D = new ModelVisual3D();
+                modelVisual3D.Content = geometryModel3D;
+                viewport.Children.Add(modelVisual3D);
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Model not found");
+            }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ExportWindow f1 = new ExportWindow(this);
+            f1.Show();
+            this.Hide();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            for(int i = 3; i < viewport.Children.Count; i++)
+            {
+                viewport.Children.RemoveAt(i);
             }
         }
     }

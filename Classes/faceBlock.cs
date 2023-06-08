@@ -27,7 +27,7 @@ namespace prova_3dviewport.Classes
                 temp= hex[offset - 11]+t;
             }
             faceAmount = Convert.ToInt32(temp, 16);
-            Trace.WriteLine("Il numero scritto è "+ faceAmount);
+            
             string hexstring;
             for (int i = offset; i < offset+ (faceAmount * 2); i += 2)
             {
@@ -36,7 +36,7 @@ namespace prova_3dviewport.Classes
                 face.Add(f);
             }
             faceAmount = faceAmount / 3;
-            Trace.WriteLine("Le facce trovate  sono "+face.Count());
+            
         }
         public string writeToObj()
         {

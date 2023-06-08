@@ -7,21 +7,69 @@
         xmlns:ht="http://helix-toolkit.org/wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="560" Width="900" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FFABADB3"/>
+        <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="#FFD9D9D9"/>
+        <Style x:Key="ListBoxStyle1" TargetType="{x:Type ListBox}">
+            <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ListBox.Static.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="1" SnapsToDevicePixels="true">
+                            <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                    <ItemsPresenter.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Export" Click="MenuItem_Click"/>
+                                        </ContextMenu>
+                                    </ItemsPresenter.ContextMenu>
+                                </ItemsPresenter>
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Border}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsGrouping" Value="true"/>
+                                    <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid Background="{DynamicResource Background}">
         <Border Style="{DynamicResource BorderStyle1}" Width="327" Height="419" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,15,0">
-            <ht:HelixViewport3D CoordinateSystemHorizontalPosition="Center" FixedRotationPointEnabled="True" x:Name="viewport" ZoomRectangleCursor="" ZoomCursor="" RotateCursor="" PanCursor="" ChangeFieldOfViewCursor="">
-                <ht:SunLight Altitude="500"/>
-                <ht:GridLinesVisual3D x:Name="grid" Length="2000" Width="2000" />
-                
+            <ht:HelixViewport3D CoordinateSystemHorizontalPosition="Center" FixedRotationPointEnabled="True" x:Name="viewport" ZoomRectangleCursor="" ZoomCursor="" RotateCursor="" PanCursor="" ChangeFieldOfViewCursor="" Background="#9EA7B1">
+                <ht:SunLight/>
+                <ht:GridLinesVisual3D x:Name="grid" Length="1000" Width="1000" Thickness="0.06" Fill="Black" />
+
             </ht:HelixViewport3D>
         </Border>
         <Border BorderThickness="0" Width="463" Height="410" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="31,0,0,26" Background="{DynamicResource Grigio scuro}">
-            <ListBox x:Name="lb_files" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource Background}" MouseDoubleClick="lb_files_MouseDoubleClick"></ListBox>
+            <ListBox Style="{DynamicResource ListBoxStyle1}" x:Name="lb_files" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource Background}" MouseDoubleClick="lb_files_MouseDoubleClick" SelectionMode="Extended"></ListBox>
         </Border>
         <StackPanel Orientation="Horizontal" Margin="31,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
             <TextBox x:Name="txt_path" Style="{DynamicResource TextBoxStyle1}" Text="" VerticalAlignment="Bottom" Width="282" Height="32" FontFamily="{DynamicResource Roboto-regular}" CharacterCasing="Lower" VerticalContentAlignment="Center" TextChanged="txt_path_TextChanged"/>
             <Button Style="{DynamicResource ButtonStyle1}" x:Name="btn_openFolder" Width="36" Height="32" Margin="8,0" VerticalAlignment="Bottom" Click="btn_openFolder_Click">
-                <Image Source="/Icon/openFolder.png" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Image Source="/Icon/openFolder.png" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2"/>
             </Button>
             <Button x:Name="btn_ExportAll" Width="114" Height="57" Style="{DynamicResource ButtonStyle1}" Margin="12,0,0,0">
                 <StackPanel Orientation="Horizontal">
@@ -30,5 +78,6 @@
                 </StackPanel>
             </Button>
         </StackPanel>
+        <Button Style="{DynamicResource ButtonStyle1}" Content="Clear" HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="31" Width="82" Click="Button_Click" Margin="0,0,135,14"/>
     </Grid>
 </Window>
