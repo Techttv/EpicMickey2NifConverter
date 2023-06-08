@@ -34,13 +34,6 @@ namespace prova_3dviewport
         public MainWindow()
         {
             InitializeComponent();
-            Nif nif = new Nif(@"C:\Users\tomma\Downloads\OST_center_01a_bellow_01a.nif");
-            ObjReader obj = new ObjReader();
-            Model3DGroup model = null;
-            model = obj.Read(nif.toModel());
-            ModelVisual3D modelVisual3D = new ModelVisual3D();
-            modelVisual3D.Content = model;
-            viewport.Children.Add(modelVisual3D);
         }
 
         private void btn_openFolder_Click(object sender, RoutedEventArgs e)
