@@ -9,9 +9,9 @@
         Title="MainWindow" Height="560" Width="900" ResizeMode="CanMinimize">
     <Grid Background="{DynamicResource Background}">
         <Border Style="{DynamicResource BorderStyle1}" Width="327" Height="419" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,15,0">
-            <ht:HelixViewport3D CoordinateSystemHorizontalPosition="Center" FixedRotationPointEnabled="True" x:Name="viewport">
+            <ht:HelixViewport3D CoordinateSystemHorizontalPosition="Center" FixedRotationPointEnabled="True" x:Name="viewport" ZoomRectangleCursor="" ZoomCursor="" RotateCursor="" PanCursor="" ChangeFieldOfViewCursor="">
                 <ht:SunLight Altitude="500"/>
-                <ht:GridLinesVisual3D/>
+                <ht:GridLinesVisual3D x:Name="grid" Length="2000" Width="2000" />
                 
             </ht:HelixViewport3D>
         </Border>

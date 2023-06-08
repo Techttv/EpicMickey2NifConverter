@@ -22,6 +22,8 @@ namespace prova_3dviewport.Classes
         private List<vertexBlock> vertex = new List<vertexBlock>();
         private List<faceBlock> face = new List<faceBlock>();
         private string filename="";
+        private static string[] hex;
+        public Point3D centerPoint;
         public Nif(string path)
         {
             try
@@ -70,8 +72,9 @@ namespace prova_3dviewport.Classes
                     vertex.Add(new vertexBlock(i + 4, hex));
                 }
             }
-
-            for(int k =0;k<vertex.Count;k++)
+            float x = 0, y = 0, z = 0;
+            int dividendo = 0;
+            for (int k =0;k<vertex.Count;k++)
             {
                 for(int i = 0; i < vertex.ElementAt(k).vertex.Count; i+=3)
                 {
@@ -80,8 +83,16 @@ namespace prova_3dviewport.Classes
                     v2 = vertex.ElementAt(k).vertex.ElementAt(i+1).ToString().Replace(',', '.');
                     v3 = vertex.ElementAt(k).vertex.ElementAt(i+2).ToString().Replace(',', '.');
                     writer.Write("v " + v1 + " " + v2 + " " + v3+"\n");
+                    x += vertex.ElementAt(k).vertex.ElementAt(i);
+                    y += vertex.ElementAt(k).vertex.ElementAt(i + 1);
+                    z += vertex.ElementAt(k).vertex.ElementAt(i + 2);
                 }
+                dividendo += vertex.ElementAt(k).vertexAmount;
             }
+            x = x / dividendo;
+            y = y / dividendo;
+            z = z / dividendo;
+            centerPoint = new Point3D(x, y, z);
             int totalIndex = 1;
             for(int k =0;k<face.Count;k++)
             {
@@ -98,6 +109,14 @@ namespace prova_3dviewport.Classes
             }
 
             writer.Close();
+        }
+        public bool isEmpty()
+        {
+            if (vertex.Count > 0)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

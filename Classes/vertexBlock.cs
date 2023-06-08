@@ -12,7 +12,7 @@ namespace prova_3dviewport.Classes
     {
         public int offset { get; set; }
         public List<float> vertex = new List<float>();
-        private int vertexAmount;
+        public int vertexAmount;
 
         public vertexBlock(int offset, string[] hex)
         {

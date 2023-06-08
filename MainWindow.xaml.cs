@@ -76,16 +76,41 @@ namespace prova_3dviewport
 
         private void lb_files_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            viewport.Children.RemoveAt(3);
+            if (viewport.Children.Count == 4)
+            {
+                viewport.Children.RemoveAt(3);
+            }
             int index = this.lb_files.SelectedIndex;
-            if (index != -1) { 
+            if (index != -1)
+            {
                 Nif nif = new Nif(strings[index]);
                 ObjReader obj = new ObjReader();
                 Model3DGroup model = null;
                 model = obj.Read(nif.toModel());
-                ModelVisual3D modelVisual3D = new ModelVisual3D();
-                modelVisual3D.Content = model;
-                viewport.Children.Add(modelVisual3D);
+                if (!nif.isEmpty())
+                {
+
+                    Model3DCollection collection = model.Children;
+                    Model3D geom = collection.ElementAt(0);
+
+                    Vector3D axis = new Vector3D(1, 0, 0); //In case you want to rotate it about the x-axis
+                    Matrix3D transformationMatrix = geom.Transform.Value; //Gets the matrix indicating the current transformation value
+                    transformationMatrix.RotateAt(new System.Windows.Media.Media3D.Quaternion(axis, 90), nif.centerPoint); //Makes a rotation transformation over this matrix
+                    geom.Transform = new MatrixTransform3D(transformationMatrix);
+
+                    grid.Center = nif.centerPoint;
+                    viewport.Camera.LookAt(nif.centerPoint, 2);
+                    viewport.CameraController.AddZoomForce(-0.3);
+                    viewport.FixedRotationPoint = nif.centerPoint;
+                    ModelVisual3D modelVisual3D = new ModelVisual3D();
+                    modelVisual3D.Content = model;
+
+                    viewport.Children.Add(modelVisual3D);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Model not found");
+                }
             }
         }
 
