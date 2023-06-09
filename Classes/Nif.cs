@@ -30,6 +30,10 @@ namespace prova_3dviewport.Classes
             {
                 Path.GetFullPath(path);
                 this.path = path;
+                if (path.Contains("toon"))
+                {
+                    return;
+                }
             }
             catch (Exception)
             {
@@ -45,7 +49,15 @@ namespace prova_3dviewport.Classes
                 fs.Close();
                 filename = fs.Name;
 
-                createMesh(filename);
+                try
+                {
+                    createMesh(filename);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
             }
 
 
@@ -106,7 +118,8 @@ namespace prova_3dviewport.Classes
                     f3 = (face.ElementAt(k).face.ElementAt(i+2) + totalIndex).ToString();
                     writer.Write("f " + f1+" "+f2+" "+f3+"\n");
                 }
-                totalIndex += vertex.ElementAt(k).vertex.Count/3;
+                    totalIndex += vertex.ElementAt(k).vertex.Count / 3;
+
             }
 
             writer.Close();
@@ -118,6 +131,16 @@ namespace prova_3dviewport.Classes
                 return false;
             }
             return true;
+        }
+
+
+        public void ToObj(string path)
+        { 
+
+            FileStream fs = File.Create(path);
+            fs.Close();
+
+            createMesh(path);
         }
     }
 }

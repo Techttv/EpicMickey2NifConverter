@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -163,7 +164,12 @@ namespace prova_3dviewport
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ExportWindow f1 = new ExportWindow(this);
+            List<string> files = new List<string>();
+            foreach(string f in lb_files.SelectedItems)
+            {
+                files.Add(basepath+"\\" +f);
+            }
+            ExportWindow f1 = new ExportWindow(this, files.ToArray());
             f1.Show();
             this.Hide();
         }

@@ -6,6 +6,119 @@
         xmlns:local="clr-namespace:prova_3dviewport"
         mc:Ignorable="d"
         Title="ExportWindow" Height="560" Width="900" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <SolidColorBrush x:Key="ProgressBar.Progress" Color="#FF06B025"/>
+        <SolidColorBrush x:Key="ProgressBar.Background" Color="#FFE6E6E6"/>
+        <SolidColorBrush x:Key="ProgressBar.Border" Color="#FFBCBCBC"/>
+        <Style x:Key="ProgressBarStyle1" TargetType="{x:Type ProgressBar}">
+            <Setter Property="Foreground" Value="{StaticResource ProgressBar.Progress}"/>
+            <Setter Property="Background" Value="{StaticResource ProgressBar.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ProgressBar.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Grid x:Name="TemplateRoot">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Determinate"/>
+                                    <VisualState x:Name="Indeterminate">
+                                        <Storyboard RepeatBehavior="Forever">
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Animation" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0.25"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:1" Value="0.25"/>
+                                                <EasingDoubleKeyFrame KeyTime="0:0:2" Value="0.25"/>
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <PointAnimationUsingKeyFrames Storyboard.TargetName="Animation" Storyboard.TargetProperty="(UIElement.RenderTransformOrigin)">
+                                                <EasingPointKeyFrame KeyTime="0" Value="-0.5,0.5"/>
+                                                <EasingPointKeyFrame KeyTime="0:0:1" Value="0.5,0.5"/>
+                                                <EasingPointKeyFrame KeyTime="0:0:2" Value="1.5,0.5"/>
+                                            </PointAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="5" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
+                            <Rectangle x:Name="PART_Track" RadiusX="5" RadiusY="5"/>
+                            <Grid x:Name="PART_Indicator" ClipToBounds="true" HorizontalAlignment="Left">
+                                <Rectangle x:Name="Indicator" RadiusX="5" RadiusY="5" Fill="{TemplateBinding Foreground}"/>
+                                <Rectangle x:Name="Animation" RadiusX="5" RadiusY="5" Fill="{TemplateBinding Foreground}" RenderTransformOrigin="0.5,0.5">
+                                    <Rectangle.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </Rectangle.RenderTransform>
+                                </Rectangle>
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Value" Value="100">
+                                <Trigger.EnterActions >
+                                    <BeginStoryboard>
+                                        <Storyboard >
+                                            <DoubleAnimation 
+                                                Storyboard.TargetProperty="(ProgressBar.Opacity)"
+                                                Duration="0:0:0.5"
+                                                            To="0.0"
+                                                            />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter Property="LayoutTransform" TargetName="TemplateRoot">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="-90"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsIndeterminate" Value="true">
+                                <Setter Property="Visibility" TargetName="Indicator" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{DynamicResource Azzurrino}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource Blu scuro}"/>
+            <Setter Property="Foreground" Value="{DynamicResource Background}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="#111A39"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" Value="#111A39"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid Background="{DynamicResource Background}">
         <Button Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Left" Margin="56,50,0,0" VerticalAlignment="Top" Height="40" Width="40" Click="Button_Click">
             <Image Source="icon/back.png" Width="20"/>
@@ -16,6 +129,12 @@
                 <Image Source="/Icon/openFolder.png" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2"/>
             </Button>
         </StackPanel>
-        <TextBox x:Name="txt_files" Style="{DynamicResource TextBoxStyle1}" Width="350" Height="350" Margin="275,123,275,71"/>
+        <TextBox x:Name="txt_files" Style="{DynamicResource TextBoxStyle1}" Text="" Width="450" Height="350" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,45,0,0" FontSize="14" />
+        <Button Width="275" x:Name="btn_expo" Height="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle2}" FontFamily="{DynamicResource Roboto-bold}" FontSize="16" Margin="0,0,0,15" Click="Button_Click_1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Panel.ZIndex="2">
+            <Grid>
+                <Label x:Name="label_export" Content="Export" Foreground="{DynamicResource Background}" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="2"/>
+                <ProgressBar x:Name="progressBar" Style="{DynamicResource ProgressBarStyle1}" Margin="3" Background="{x:Null}" Foreground="{DynamicResource Blu scuro}" BorderBrush="{x:Null}" Value="0" ValueChanged="progressBar_ValueChanged"  Opacity="1" Panel.ZIndex="0"/>
+            </Grid>
+        </Button>
     </Grid>
 </Window>

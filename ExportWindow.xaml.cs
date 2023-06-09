@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualBasic;
+﻿using HelixToolkit.Wpf;
+using Microsoft.VisualBasic;
+using prova_3dviewport.Classes;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -24,13 +27,15 @@ namespace prova_3dviewport
     {
         string exportFolder = "";
         Window f1;
-        public ExportWindow(Window f1)
+        List<string> files = new List<string>();
+        public ExportWindow(Window f1, string[] strings)
         {
             InitializeComponent();
             this.f1 = f1;
-            foreach(string var in MainWindow.strings)
+            foreach(string item in strings)
             {
-                txt_files.Text += var;
+                files.Add(item);
+                txt_files.Text +=( item + "\n");
             }
         }
 
@@ -52,6 +57,52 @@ namespace prova_3dviewport
             txt_path.Text = path;
             exportFolder = path;
 
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (exportFolder.Length > 0)
+            {
+                progressBar.Opacity = 1;
+                ObjExporter objExporter = new ObjExporter();
+                int s = 0;
+                foreach (string file in files)
+                {
+                    Nif nif = new Nif(file);
+                    string filename = file.Substring(file.LastIndexOf('\\') + 1);
+                    filename.Remove(filename.Length - 4);
+                    nif.ToObj(exportFolder+"\\"+filename+".obj");
+                    s++;
+                    progressBar.Value = s*100/files.Count;
+                }
+                label_export.Content = "Completed succesfully";
+                Task.Delay(5000).ContinueWith(_ =>
+                {
+                    
+                }
+                    );
+                label_export.Content = "Export";
+            }
+        }
+
+        private void progressBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if(progressBar.Value == 100)
+            {
+                DoubleAnimation doubleAnimation = new DoubleAnimation();
+                doubleAnimation.To = 0.0;
+                doubleAnimation.Duration = new Duration(TimeSpan.FromSeconds(1));
+
+                Storyboard storyboard = new Storyboard();
+
+                Storyboard.SetTargetName(doubleAnimation, progressBar.Name);
+                Storyboard.SetTargetProperty(doubleAnimation, new PropertyPath(System.Windows.Controls.Control.OpacityProperty));
+
+                storyboard.Children.Add(doubleAnimation);
+
+                storyboard.Begin(this);
+            }
+        
         }
     }
 }
