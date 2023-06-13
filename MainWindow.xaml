@@ -64,14 +64,21 @@
             </ht:HelixViewport3D>
         </Border>
         <Border BorderThickness="0" Width="463" Height="410" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="31,0,0,26" Background="{DynamicResource Grigio scuro}">
-            <ListBox Style="{DynamicResource ListBoxStyle1}" x:Name="lb_files" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource Background}" MouseDoubleClick="lb_files_MouseDoubleClick" SelectionMode="Extended"></ListBox>
+            <ListBox Style="{DynamicResource ListBoxStyle1}" x:Name="lb_files" Grid.Row="1" Background="Transparent" Foreground="{DynamicResource Background}" MouseDoubleClick="lb_files_MouseDoubleClick" SelectionMode="Extended" BorderBrush="{x:Null}"></ListBox>
         </Border>
         <StackPanel Orientation="Horizontal" Margin="31,20,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
             <TextBox x:Name="txt_path" Style="{DynamicResource TextBoxStyle1}" Text="" VerticalAlignment="Bottom" Width="282" Height="32" FontFamily="{DynamicResource Roboto-regular}" CharacterCasing="Lower" VerticalContentAlignment="Center" TextChanged="txt_path_TextChanged"/>
-            <Button Style="{DynamicResource ButtonStyle1}" x:Name="btn_openFolder" Width="36" Height="32" Margin="8,0" VerticalAlignment="Bottom" Click="btn_openFolder_Click">
-                <Image Source="/Icon/openFolder.png" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2"/>
+            <Button Style="{DynamicResource ButtonStyle1}" x:Name="btn_openFolder" Width="36" Height="32" Margin="8,0" VerticalAlignment="Bottom" Click="btn_openFolder_Click" MouseEnter="btn_OpenSourceFolder_MouseEnter" MouseLeave="btn_OpenSourceFolder_MouseLeave" >
+                <StackPanel>
+                    <Image Source="/Icon/openFolder.png" Width="20" Margin="2"/>
+                    <Popup Name="popup_OpenSourceFolder" IsOpen="False" PlacementTarget="{Binding ElementName=btn_openFolder}" Placement="Bottom" PopupAnimation="Fade" >
+                        <Border CornerRadius="5" Background="{DynamicResource Azzurrino}" BorderThickness="0">
+                            <Label Foreground="{DynamicResource Background}" Background="Transparent" FontFamily="{DynamicResource Roboto-regular}" FontSize="12" Content="Select Source Folder"/>
+                        </Border>
+                    </Popup>
+                </StackPanel>
             </Button>
-            <Button x:Name="btn_ExportAll" Width="114" Height="57" Style="{DynamicResource ButtonStyle1}" Margin="12,0,0,0">
+            <Button x:Name="btn_ExportAll" Width="114" Height="57" Style="{DynamicResource ButtonStyle1}" Margin="12,0,0,0" Click="btn_ExportAll_Click">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock TextWrapping="Wrap" Text="Export all" Width="50" FontSize="17" FontFamily="{DynamicResource Roboto-bold}" Margin="0,0,9,0" Foreground="{DynamicResource Background}"/>
                     <Image Source="/Icon/export.png" UseLayoutRounding="False" Width="30"/>

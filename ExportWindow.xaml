@@ -126,15 +126,37 @@
         <StackPanel Orientation="Horizontal" Margin="0,58,0,0" VerticalAlignment="Top" HorizontalAlignment="Center" Width="330">
             <TextBox x:Name="txt_path" Style="{DynamicResource TextBoxStyle1}" Text="" VerticalAlignment="Bottom" Width="282" Height="32" FontFamily="{DynamicResource Roboto-regular}" CharacterCasing="Lower" VerticalContentAlignment="Center"/>
             <Button Style="{DynamicResource ButtonStyle1}" x:Name="btn_openFolder" Width="36" Height="32" Margin="8,0" VerticalAlignment="Bottom" Click="btn_openFolder_Click">
-                <Image Source="/Icon/openFolder.png" Width="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2"/>
+                <StackPanel>
+                    <Image Source="/Icon/openFolder.png" Width="25" Margin="2"/>
+                    <Popup Name="popup_OpenSourceFolder" IsOpen="False" PlacementTarget="{Binding ElementName=btn_openFolder}" Placement="Bottom" PopupAnimation="Fade" MouseEnter="btn_OpenSourceFolder_MouseEnter" MouseLeave="btn_OpenSourceFolder_MouseLeave">
+                        <Border CornerRadius="5" Background="{DynamicResource Azzurrino}" BorderThickness="0">
+                            <Label Foreground="{DynamicResource Background}" Background="Transparent" FontFamily="{DynamicResource Roboto-regular}" FontSize="12" Content="Select Source Folder"/>
+                        </Border>
+                    </Popup>
+                </StackPanel>
             </Button>
         </StackPanel>
-        <TextBox x:Name="txt_files" Style="{DynamicResource TextBoxStyle1}" Text="" Width="450" Height="350" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,45,0,0" FontSize="14" />
-        <Button Width="275" x:Name="btn_expo" Height="40" HorizontalAlignment="Center" VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyle2}" FontFamily="{DynamicResource Roboto-bold}" FontSize="16" Margin="0,0,0,15" Click="Button_Click_1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Panel.ZIndex="2">
-            <Grid>
-                <Label x:Name="label_export" Content="Export" Foreground="{DynamicResource Background}" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="2"/>
-                <ProgressBar x:Name="progressBar" Style="{DynamicResource ProgressBarStyle1}" Margin="3" Background="{x:Null}" Foreground="{DynamicResource Blu scuro}" BorderBrush="{x:Null}" Value="0" ValueChanged="progressBar_ValueChanged"  Opacity="1" Panel.ZIndex="0"/>
-            </Grid>
-        </Button>
+        <TextBox x:Name="txt_files" Style="{DynamicResource TextBoxStyle1}" Text="" Width="450" Height="325" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,20,0,0" FontSize="14" />
+
+        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,15">
+            <Button Width="275" x:Name="btn_expo" Height="40" Style="{DynamicResource ButtonStyle2}" FontFamily="{DynamicResource Roboto-bold}" FontSize="16"  Click="Button_Click_1" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Panel.ZIndex="2" Margin="0,0,10,0">
+                <Grid>
+                    <Label x:Name="label_export" Content="Export" Foreground="{DynamicResource Background}" HorizontalAlignment="Center" VerticalAlignment="Center" Panel.ZIndex="2"/>
+                    <ProgressBar x:Name="progressBar" Style="{DynamicResource ProgressBarStyle1}" Margin="3" Background="{x:Null}" Foreground="{DynamicResource Blu scuro}" BorderBrush="{x:Null}" Value="0" ValueChanged="progressBar_ValueChanged"  Opacity="1" Panel.ZIndex="0"/>
+                </Grid>
+            </Button>
+            <Button x:Name="btn_OpenDestFolder" Height="40" Width="40" Style="{DynamicResource ButtonStyle2}" MouseEnter="btn_OpenDestFolder_MouseEnter" MouseLeave="btn_OpenDestFolder_MouseLeave">
+                <StackPanel>                
+                    <Image Source="/Icon/openFolder.png" Width="30"/>
+                    <Popup Name="popup_OpenDestFolder" IsOpen="False" PlacementTarget="{Binding ElementName=btn_OpenDestFolder}" Placement="Bottom" PopupAnimation="Fade">
+                        <Border CornerRadius="5" Background="{DynamicResource Azzurrino}" BorderThickness="0">
+                            <Label Foreground="{DynamicResource Background}" Background="Transparent" FontFamily="{DynamicResource Roboto-regular}" FontSize="12" Content="Open destination folder"/>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+
+            </Button>
+        </StackPanel>
+        <Label x:Name="lbl_items" Content="Total items: " HorizontalAlignment="Center"  VerticalAlignment="Bottom" Foreground="{DynamicResource Grigio scuro}" FontFamily="{DynamicResource Roboto-bold}" FontSize="16" Margin="0,0,16,60"/>
     </Grid>
 </Window>

@@ -36,7 +36,9 @@ namespace prova_3dviewport
             {
                 files.Add(item);
                 txt_files.Text +=( item + "\n");
+                
             }
+            lbl_items.Content = "Total items: " + files.Count();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -68,10 +70,13 @@ namespace prova_3dviewport
                 int s = 0;
                 foreach (string file in files)
                 {
-                    Nif nif = new Nif(file);
-                    string filename = file.Substring(file.LastIndexOf('\\') + 1);
-                    filename.Remove(filename.Length - 4);
-                    nif.ToObj(exportFolder+"\\"+filename+".obj");
+                    if (!file.Contains("toon"))
+                    {
+                        Nif nif = new Nif(file);
+                        string filename = file.Substring(file.LastIndexOf('\\') + 1);
+                        filename.Remove(filename.Length - 4);
+                        nif.ToObj(exportFolder + "\\" + filename + ".obj");
+                    }
                     s++;
                     progressBar.Value = s*100/files.Count;
                 }
@@ -103,6 +108,26 @@ namespace prova_3dviewport
                 storyboard.Begin(this);
             }
         
+        }
+
+        private void btn_OpenDestFolder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            popup_OpenDestFolder.IsOpen = true;
+        }
+
+        private void btn_OpenDestFolder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            popup_OpenDestFolder.IsOpen=false;
+        }
+
+        private void btn_OpenSourceFolder_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            popup_OpenSourceFolder.IsOpen = true;
+        }
+
+        private void btn_OpenSourceFolder_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            popup_OpenSourceFolder.IsOpen = false;
         }
     }
 }

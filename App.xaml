@@ -61,11 +61,11 @@
                                     <BeginStoryboard>
                                         <Storyboard>
                                             <ThicknessAnimationUsingKeyFrames
-                                                Duration="0:0:1"
+                                                Duration="0.4:0:0.4"
                                                 FillBehavior="HoldEnd"
                                                 Storyboard.TargetProperty="BorderThickness"
                                                 >
-                                                <SplineThicknessKeyFrame KeySpline="1,0.0 0.6,0.00" KeyTime="0:0:1">
+                                                <SplineThicknessKeyFrame KeySpline="1,0.0 0.6,0.00" KeyTime="0:0:0.3">
                                                     <SplineThicknessKeyFrame.Value>
                                                         <Thickness Left="6" Right="6" Top="6" Bottom="6"/>
                                                     </SplineThicknessKeyFrame.Value>

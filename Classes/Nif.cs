@@ -1,29 +1,22 @@
-﻿using HelixToolkit.Wpf;
-using HelixToolkit.Wpf.SharpDX;
-using SharpDX.Direct3D9;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+using System.Windows;
 using System.Windows.Media.Media3D;
 
 namespace prova_3dviewport.Classes
 {
-
     public class Nif
     {
         private string path;
         private List<vertexBlock> vertex = new List<vertexBlock>();
         private List<faceBlock> face = new List<faceBlock>();
-        private string filename="";
+        private string filename = "";
         private static string[] hex;
         public Point3D centerPoint;
+
         public Nif(string path)
         {
             try
@@ -32,6 +25,7 @@ namespace prova_3dviewport.Classes
                 this.path = path;
                 if (path.Contains("toon"))
                 {
+                    Trace.WriteLine("è toon");
                     return;
                 }
             }
@@ -43,23 +37,29 @@ namespace prova_3dviewport.Classes
 
         public string toModel()
         {
-            if (filename.Length==0&&!path.Contains("toon"))
+            if (filename.Length == 0 || !filename.Contains("toon"))
             {
-                FileStream fs = File.Create(@"temp.obj");
-                fs.Close();
-                filename = fs.Name;
-
                 try
                 {
+                    FileStream fs = File.Create(@"temp.obj");
+                    fs.Close();
+
+                    filename = fs.Name;
                     createMesh(filename);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-
-                    throw;
+                    if (e.Message.Contains("temp.obj"))
+                    {
+                        System.GC.Collect();
+                        System.GC.WaitForPendingFinalizers();
+                        File.Delete(@"temp.obj");
+                        return "";
+                    }
+                    MessageBox.Show(e.Message);
+                    return "";
                 }
             }
-
 
             return filename;
         }
@@ -68,34 +68,48 @@ namespace prova_3dviewport.Classes
         {
             StreamWriter writer = new StreamWriter(filename);
             writer.AutoFlush = true;
-            byte[] data = File.ReadAllBytes(path);
+            byte[] data;
+
+            try
+            {
+                data = File.ReadAllBytes(path);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return;
+            }
             string temphex = BitConverter.ToString(data);
             string[] hex = temphex.Split('-');
-
             for (int i = 0; i < hex.Length; i++)
             {
-                
                 if (hex[i].Equals("15") && hex[i + 1] == "02" && hex[i + 2] == "01")
                 {
                     face.Add(new faceBlock(i + 4, hex));
+                    if (face.Count - vertex.Count > 1)
+                    {
+                        face.RemoveAt(face.Count - 1);
+                        face.Last().Append(i + 4, hex);
+                    }
                 }
-                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i+2]=="03" && ((hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04") || (hex[i + 4] != "36" && hex[i + 5] != "04" && hex[i + 6] != "02"))))
+                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03" && ((hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04") || (hex[i + 4] != "36" && hex[i + 5] != "04" && hex[i + 6] != "02"))))
                 {
                     //ricerca dei blocchi dei vertici FUNZIONA
+
                     vertex.Add(new vertexBlock(i + 4, hex));
                 }
             }
             float x = 0, y = 0, z = 0;
             int dividendo = 0;
-            for (int k =0;k<vertex.Count;k++)
+            for (int k = 0; k < vertex.Count; k++)
             {
-                for(int i = 0; i < vertex.ElementAt(k).vertex.Count; i+=3)
+                for (int i = 0; i < vertex.ElementAt(k).vertex.Count; i += 3)
                 {
-                    string v1, v2,v3;
+                    string v1, v2, v3;
                     v1 = vertex.ElementAt(k).vertex.ElementAt(i).ToString().Replace(',', '.');
-                    v2 = vertex.ElementAt(k).vertex.ElementAt(i+1).ToString().Replace(',', '.');
-                    v3 = vertex.ElementAt(k).vertex.ElementAt(i+2).ToString().Replace(',', '.');
-                    writer.Write("v " + v1 + " " + v2 + " " + v3+"\n");
+                    v2 = vertex.ElementAt(k).vertex.ElementAt(i + 1).ToString().Replace(',', '.');
+                    v3 = vertex.ElementAt(k).vertex.ElementAt(i + 2).ToString().Replace(',', '.');
+                    writer.Write("v " + v1 + " " + v2 + " " + v3 + "\n");
                     x += vertex.ElementAt(k).vertex.ElementAt(i);
                     y += vertex.ElementAt(k).vertex.ElementAt(i + 1);
                     z += vertex.ElementAt(k).vertex.ElementAt(i + 2);
@@ -107,23 +121,29 @@ namespace prova_3dviewport.Classes
             z = z / dividendo;
             centerPoint = new Point3D(x, y, z);
             int totalIndex = 1;
-            for(int k =0;k<face.Count;k++)
+            if (vertex.Count() == 1)
             {
-                
-                for(int i =0;i<face.ElementAt(k).face.Count;i+=3)
+                while (face.Count() != vertex.Count())
+                {
+                    vertex.Add(vertex.ElementAt(0));
+                }
+            }
+            for (int k = 0; k < face.Count; k++)
+            {
+                for (int i = 0; i < face.ElementAt(k).face.Count; i += 3)
                 {
                     string f1, f2, f3;
                     f1 = (face.ElementAt(k).face.ElementAt(i) + totalIndex).ToString();
-                    f2 = (face.ElementAt(k).face.ElementAt(i+1) + totalIndex).ToString();
-                    f3 = (face.ElementAt(k).face.ElementAt(i+2) + totalIndex).ToString();
-                    writer.Write("f " + f1+" "+f2+" "+f3+"\n");
+                    f2 = (face.ElementAt(k).face.ElementAt(i + 1) + totalIndex).ToString();
+                    f3 = (face.ElementAt(k).face.ElementAt(i + 2) + totalIndex).ToString();
+                    writer.Write("f " + f1 + " " + f2 + " " + f3 + "\n");
                 }
-                    totalIndex += vertex.ElementAt(k).vertex.Count / 3;
-
+                totalIndex += vertex.ElementAt(k).vertex.Count / 3;
             }
 
             writer.Close();
         }
+
         public bool isEmpty()
         {
             if (vertex.Count > 0)
@@ -133,14 +153,20 @@ namespace prova_3dviewport.Classes
             return true;
         }
 
-
         public void ToObj(string path)
-        { 
+        {
+            try
+            {
+                FileStream fs = File.Create(path);
+                fs.Close();
 
-            FileStream fs = File.Create(path);
-            fs.Close();
-
-            createMesh(path);
+                createMesh(path);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return;
+            }
         }
     }
 }
