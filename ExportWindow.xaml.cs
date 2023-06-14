@@ -129,5 +129,13 @@ namespace prova_3dviewport
         {
             popup_OpenSourceFolder.IsOpen = false;
         }
+
+        private void btn_OpenDestFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (txt_path.Text.Length > 0)
+            {
+                System.Diagnostics.Process.Start("explorer.exe", txt_path.Text);
+            }
+        }
     }
 }

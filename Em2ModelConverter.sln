@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32602.291
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "prova_3dviewport", "prova_3dviewport.csproj", "{6AD423DE-B824-4A99-85B0-24878C0EB58F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Em2ModelConverter", "Em2ModelConverter.csproj", "{6AD423DE-B824-4A99-85B0-24878C0EB58F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

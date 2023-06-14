@@ -66,6 +66,7 @@ namespace prova_3dviewport.Classes
 
         private void createMesh(string filename)
         {
+            
             StreamWriter writer = new StreamWriter(filename);
             writer.AutoFlush = true;
             byte[] data;
