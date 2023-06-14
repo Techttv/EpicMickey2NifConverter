@@ -19,8 +19,7 @@ namespace prova_3dviewport.Classes
 
         public Nif(string path)
         {
-            try
-            {
+
                 Path.GetFullPath(path);
                 this.path = path;
                 if (path.Contains("toon"))
@@ -28,27 +27,28 @@ namespace prova_3dviewport.Classes
                     Trace.WriteLine("è toon");
                     return;
                 }
-            }
-            catch (Exception)
+
+            /*catch (Exception)
             {
-                throw;
-            }
+                throw ;
+            }*/
         }
 
         public string toModel()
         {
             if (filename.Length == 0 || !filename.Contains("toon"))
             {
-                try
-                {
+
                     FileStream fs = File.Create(@"temp.obj");
                     fs.Close();
 
                     filename = fs.Name;
                     createMesh(filename);
-                }
+
+                /*
                 catch (Exception e)
                 {
+
                     if (e.Message.Contains("temp.obj"))
                     {
                         System.GC.Collect();
@@ -58,7 +58,7 @@ namespace prova_3dviewport.Classes
                     }
                     MessageBox.Show(e.Message);
                     return "";
-                }
+                }*/
             }
 
             return filename;
@@ -86,14 +86,14 @@ namespace prova_3dviewport.Classes
             {
                 if (hex[i].Equals("15") && hex[i + 1] == "02" && hex[i + 2] == "01")
                 {
+                    if(face.Count-vertex.Count==0)
                     face.Add(new faceBlock(i + 4, hex));
-                    if (face.Count - vertex.Count > 1)
-                    {
-                        face.RemoveAt(face.Count - 1);
-                        face.Last().Append(i + 4, hex);
-                    }
                 }
-                if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03" && ((hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04") || (hex[i + 4] != "36" && hex[i + 5] != "04" && hex[i + 6] != "02"))))
+                if(i== 222.056||i== 232449)
+                {
+
+                }
+                 if ((hex[i].Equals("37") && hex[i + 1] == "04" && hex[i + 2] == "03" && ((hex[i + 4] != "38" && hex[i + 5] != "04" && hex[i + 6] != "04") || (hex[i + 4] != "36" && hex[i + 5] != "04" && hex[i + 6] != "02"))))
                 {
                     //ricerca dei blocchi dei vertici FUNZIONA
 
