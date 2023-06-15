@@ -28,6 +28,7 @@ namespace prova_3dviewport
         string exportFolder = "";
         Window f1;
         List<string> files = new List<string>();
+        public static int initialVertex = 1;
         public ExportWindow(Window f1, string[] strings)
         {
             InitializeComponent();
@@ -63,23 +64,52 @@ namespace prova_3dviewport
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            //export button
+
+            
             if (exportFolder.Length > 0)
             {
                 progressBar.Opacity = 1;
-                ObjExporter objExporter = new ObjExporter();
                 int s = 0;
-                foreach (string file in files)
+
+                if(chk_merge.IsChecked == true)
                 {
-                    if (!file.Contains("toon"))
+                    initialVertex = 1;
+                    
+                    FileStream fs = File.Create(exportFolder + "\\" + txt_exportFilename.Text + ".obj");
+                    fs.Close();
+                    StreamWriter writer = new StreamWriter(exportFolder + "\\" + txt_exportFilename.Text + ".obj");
+                    foreach (string file in files)
                     {
-                        Nif nif = new Nif(file);
-                        string filename = file.Substring(file.LastIndexOf('\\') + 1);
-                        filename.Remove(filename.Length - 4);
-                        nif.ToObj(exportFolder + "\\" + filename + ".obj");
+                        if (!file.Contains("toon"))
+                        {
+                            writer.WriteLine("o "+ file.Substring(file.LastIndexOf("\\"), file.LastIndexOf('.')- file.LastIndexOf("\\")));
+                            Nif nif = new Nif(file);
+                            nif.ToObj(writer);
+                        }
+                        s++;
+                        progressBar.Value = s * 100 / files.Count;
                     }
-                    s++;
-                    progressBar.Value = s*100/files.Count;
+                    writer.Close();
                 }
+                else
+                {
+                    initialVertex = 1;
+                    foreach (string file in files)
+                    {
+                        if (!file.Contains("toon"))
+                        {
+                            Nif nif = new Nif(file);
+                            string filename = file.Substring(file.LastIndexOf('\\') + 1);
+                            filename.Remove(filename.Length - 4);
+                            nif.ToObj(exportFolder + "\\" + filename + ".obj");
+                        }
+                        s++;
+                        progressBar.Value = s * 100 / files.Count;
+                    }
+                }
+
+                
                 label_export.Content = "Completed succesfully";
                 Task.Delay(5000).ContinueWith(_ =>
                 {
@@ -135,6 +165,20 @@ namespace prova_3dviewport
             if (txt_path.Text.Length > 0)
             {
                 System.Diagnostics.Process.Start("explorer.exe", txt_path.Text);
+            }
+        }
+
+        private void chk_merge_Click(object sender, RoutedEventArgs e)
+        {
+            if(chk_merge.IsChecked==true)
+            {
+                lbl_destFolder.Visibility = Visibility.Visible;
+                txt_exportFilename.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                lbl_destFolder.Visibility = Visibility.Collapsed;
+                txt_exportFilename.Visibility = Visibility.Collapsed;
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -47,7 +48,7 @@ namespace prova_3dviewport
 
         private void lb_files_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (viewport.Children.Count == 4)
+            if (viewport.Children.Count > 3)
             {
                 for (int i = 3; i < viewport.Children.Count; i++)
                 {
@@ -78,7 +79,16 @@ namespace prova_3dviewport
             String path = txt_path.Text;
             try
             {
-                var txtFiles = Directory.EnumerateFiles(path, "*.nif");
+                SearchOption searchOption = SearchOption.TopDirectoryOnly;
+                if(chk_recursive.IsChecked== true)
+                {
+                    searchOption = SearchOption.AllDirectories;
+                }
+                else {
+                    searchOption = SearchOption.TopDirectoryOnly;
+                }
+                var txtFiles = Directory.EnumerateFiles(path, "*.*", searchOption)
+                            .Where(s => s.EndsWith(".nif") || s.EndsWith(".nif_wii"));
 
                 foreach (string currentFile in txtFiles)
                 {
@@ -201,6 +211,64 @@ namespace prova_3dviewport
             ExportWindow f1 = new ExportWindow(this, strings.ToArray());
             f1.Show();
             this.Hide();
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            strings.Clear();
+            lb_files.Items.Clear();
+            String path = txt_path.Text;
+            try
+            {
+                SearchOption searchOption = SearchOption.TopDirectoryOnly;
+                if (chk_recursive.IsChecked == true)
+                {
+                    searchOption = SearchOption.AllDirectories;
+                }
+                else
+                {
+                    searchOption = SearchOption.TopDirectoryOnly;
+                }
+                var txtFiles = Directory.EnumerateFiles(path, "*.*", searchOption)
+                            .Where(s => s.EndsWith(".nif") || s.EndsWith(".nif_wii"));
+
+                foreach (string currentFile in txtFiles)
+                {
+                    strings.Add(currentFile);
+                    string fileName = currentFile.Substring(path.Length + 1);
+                    lb_files.Items.Add(fileName);
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (viewport.Children.Count >3)
+            {
+                for (int i = 3; i < viewport.Children.Count; i++)
+                {
+                    viewport.Children.RemoveAt(i);
+                }
+            }
+            int index = this.lb_files.SelectedIndex;
+            if (lb_files.SelectedItems.Count > 1)
+            {
+                foreach (var item in lb_files.SelectedItems)
+                {
+                    string path = basepath + "\\" + item.ToString();
+                    LoadFile(path);
+                }
+                return;
+            }
+            if (index != -1)
+            {
+                LoadFile(strings[index]);
+
+
+            }
         }
     }
 }

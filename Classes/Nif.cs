@@ -14,12 +14,13 @@ namespace prova_3dviewport.Classes
         private List<vertexBlock> vertex = new List<vertexBlock>();
         private List<faceBlock> face = new List<faceBlock>();
         private string filename = "";
-        private static string[] hex;
         public Point3D centerPoint;
+        
 
         public Nif(string path)
         {
-
+            try
+            {
                 Path.GetFullPath(path);
                 this.path = path;
                 if (path.Contains("toon"))
@@ -27,25 +28,30 @@ namespace prova_3dviewport.Classes
                     Trace.WriteLine("è toon");
                     return;
                 }
-
-            /*catch (Exception)
+            }
+            catch (Exception)
             {
-                throw ;
-            }*/
+                throw;
+            }
         }
 
         public string toModel()
         {
             if (filename.Length == 0 || !filename.Contains("toon"))
             {
-
+                try
+                {
                     FileStream fs = File.Create(@"temp.obj");
                     fs.Close();
 
                     filename = fs.Name;
-                    createMesh(filename);
+                    StreamWriter writer = new StreamWriter(filename);
 
-                /*
+                    createMesh(writer);
+                    ExportWindow.initialVertex = 1;
+                    writer.Close();
+
+                }
                 catch (Exception e)
                 {
 
@@ -58,16 +64,16 @@ namespace prova_3dviewport.Classes
                     }
                     MessageBox.Show(e.Message);
                     return "";
-                }*/
+                }
             }
 
             return filename;
         }
 
-        private void createMesh(string filename)
+        private void createMesh(StreamWriter writer)
         {
             
-            StreamWriter writer = new StreamWriter(filename);
+
             writer.AutoFlush = true;
             byte[] data;
 
@@ -108,6 +114,12 @@ namespace prova_3dviewport.Classes
             }
             float x = 0, y = 0, z = 0;
             int dividendo = 0;
+            int t1 = 0;
+            foreach(vertexBlock v in vertex)
+            {
+                t1 += v.vertexAmount;
+            }
+            writer.WriteLine("#Vertex Count " + t1);
             for (int k = 0; k < vertex.Count; k++)
             {
                 for (int i = 0; i < vertex.ElementAt(k).vertex.Count; i += 3)
@@ -127,7 +139,7 @@ namespace prova_3dviewport.Classes
             y = y / dividendo;
             z = z / dividendo;
             centerPoint = new Point3D(x, y, z);
-            int totalIndex = 1;
+            int totalIndex = ExportWindow.initialVertex;
             if (vertex.Count() == 1)
             {
                 while (face.Count() != vertex.Count())
@@ -135,8 +147,17 @@ namespace prova_3dviewport.Classes
                     vertex.Add(vertex.ElementAt(0));
                 }
             }
+            t1 = 0;
+            foreach (faceBlock f in face)
+            {
+                t1 += f.faceAmount;
+            }
+            Trace.WriteLine(totalIndex);
+            
+            writer.WriteLine("#Face Count " + t1);
             for (int k = 0; k < face.Count; k++)
             {
+
                 for (int i = 0; i < face.ElementAt(k).face.Count; i += 3)
                 {
                     string f1, f2, f3;
@@ -146,9 +167,10 @@ namespace prova_3dviewport.Classes
                     writer.Write("f " + f1 + " " + f2 + " " + f3 + "\n");
                 }
                 totalIndex += vertex.ElementAt(k).vertex.Count / 3;
+
             }
 
-            writer.Close();
+            ExportWindow.initialVertex = totalIndex;
         }
 
         public bool isEmpty()
@@ -166,8 +188,25 @@ namespace prova_3dviewport.Classes
             {
                 FileStream fs = File.Create(path);
                 fs.Close();
+                StreamWriter writer = new StreamWriter(path);
 
-                createMesh(path);
+                createMesh(writer);
+                ExportWindow.initialVertex = 1;
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return;
+            }
+        }
+        public void ToObj(StreamWriter streamWriter)
+        {
+            try
+            {
+
+                createMesh(streamWriter);
+
             }
             catch (Exception e)
             {

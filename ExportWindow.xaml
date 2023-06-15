@@ -146,7 +146,7 @@
                 </Grid>
             </Button>
             <Button x:Name="btn_OpenDestFolder" Height="40" Width="40" Style="{DynamicResource ButtonStyle2}" MouseEnter="btn_OpenDestFolder_MouseEnter" MouseLeave="btn_OpenDestFolder_MouseLeave" Click="btn_OpenDestFolder_Click">
-                <StackPanel>                
+                <StackPanel>
                     <Image Source="/Icon/openFolder.png" Width="30"/>
                     <Popup Name="popup_OpenDestFolder" IsOpen="False" PlacementTarget="{Binding ElementName=btn_OpenDestFolder}" Placement="Bottom" PopupAnimation="Fade">
                         <Border CornerRadius="5" Background="{DynamicResource Azzurrino}" BorderThickness="0">
@@ -158,5 +158,14 @@
             </Button>
         </StackPanel>
         <Label x:Name="lbl_items" Content="Total items: " HorizontalAlignment="Center"  VerticalAlignment="Bottom" Foreground="{DynamicResource Grigio scuro}" FontFamily="{DynamicResource Roboto-bold}" FontSize="16" Margin="0,0,16,60"/>
+        <Grid Width="188" HorizontalAlignment="Right" Margin="0,0,21,0" VerticalAlignment="Center">
+            <Border Background="{DynamicResource Grigio scuro}" CornerRadius="8"/>
+            <StackPanel>
+                <CheckBox x:Name="chk_merge" Content="Merge all"  FontFamily="{DynamicResource Roboto-regular}" FontSize="15" Foreground="{DynamicResource Background}" Margin="15" HorizontalAlignment="Center" Click="chk_merge_Click"/>
+                <Label x:Name="lbl_destFolder" Content="Destination filename: " FontFamily="{DynamicResource Roboto-regular}" HorizontalAlignment="Center" FontSize="15" Visibility="Collapsed"/>
+                <TextBox x:Name="txt_exportFilename" Style="{DynamicResource TextBoxStyle1}" Text="" Foreground="{DynamicResource Blu scuro}" Width="Auto" Height="32" FontFamily="{DynamicResource Roboto-regular}" VerticalContentAlignment="Center" Background="{DynamicResource Background}" Margin="15,2,15,15" Visibility="Collapsed"/>
+            </StackPanel>
+        </Grid>
+        <Label Content="Destination folder" FontFamily="{DynamicResource Roboto-bold}" FontSize="15" Foreground="{DynamicResource Blu scuro}" HorizontalAlignment="Center" Margin="0,27,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

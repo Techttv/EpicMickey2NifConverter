@@ -11,7 +11,7 @@ namespace prova_3dviewport.Classes
     {
         public int offset { get; set; }
         public List<int> face = new List<int>();
-        private int faceAmount;
+        public int faceAmount;
 
         public faceBlock(int offset, string[] hex)
         {
